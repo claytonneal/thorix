@@ -1,6 +1,7 @@
 # Thorix
 
 [![PyPI](https://img.shields.io/pypi/v/thorix)](https://pypi.org/project/thorix/)
+![Main CI](https://github.com/claytonneal/thorix/actions/workflows/on-main.yml/badge.svg)
 
 ⚠️ Thorix is currently under development and not ready for production use.
 
