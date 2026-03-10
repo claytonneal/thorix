@@ -2,6 +2,11 @@ class ThorixError(Exception):
     """Base exception for all Thorix errors"""
 
 
+# --------------------------------------
+# HTTP Errors
+# -------------------------------------
+
+
 class ThorixHttpError(ThorixError):
     """Base exception for all Thorix http errors"""
 
@@ -16,3 +21,12 @@ class ThorixHTTPRetryError(ThorixHttpError):
 
 class ThorixHTTPInvalidResponseError(ThorixHttpError):
     """HTTP response was invalid"""
+
+
+# ---------------------------------------
+# Config Errors
+# ---------------------------------------
+
+
+class ThorixConfigError(ThorixError):
+    """Invalid configuration"""

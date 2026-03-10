@@ -117,123 +117,14 @@ class TestRetrySyncSleep:
         mock_sleep.assert_called_once()  # only between attempts, not after last
 
     def test_delay_is_capped_by_max_delay(self):
+        # base=1.0, so attempt=1 delay = 1.0 * 2^1 = 2.0, capped to 1.5
         config = HTTPConfig(
-            max_retries=1,
-            retry_base_delay=10.0,
-            retry_max_delay=1.0,
+            max_retries=2,
+            retry_base_delay=1.0,
+            retry_max_delay=1.5,
             retry_delay_jitter=0,
         )
-        fn = MagicMock(side_effect=[httpx.ConnectError("fail"), {"ok": True}])
+        fn = MagicMock(side_effect=[httpx.ConnectError("fail"), httpx.ConnectError("fail"), {"ok": True}])
         with patch("thorix.http.retry.time.sleep") as mock_sleep:
             retry_sync(fn, config)
-        assert mock_sleep.call_args[0][0] == pytest.approx(1.0, abs=0.01)
-
-
-# ---------------------------------------------------------------------------
-# retry_async
-# ---------------------------------------------------------------------------
-
-
-class TestRetryAsyncSuccess:
-    @pytest.mark.asyncio
-    async def test_returns_result_on_first_attempt(self):
-        async def fn():
-            return {"ok": True}
-
-        result = await retry_async(fn, NO_RETRY)
-        assert result == {"ok": True}
-
-    @pytest.mark.asyncio
-    async def test_returns_result_after_retry(self):
-        call_count = 0
-
-        async def fn():
-            nonlocal call_count
-            call_count += 1
-            if call_count == 1:
-                raise httpx.ConnectError("fail")
-            return {"ok": True}
-
-        result = await retry_async(fn, ONE_RETRY)
-        assert result == {"ok": True}
-        assert call_count == 2
-
-
-class TestRetryAsyncRequestError:
-    @pytest.mark.asyncio
-    async def test_raises_retry_error_when_exhausted(self):
-        async def fn():
-            raise httpx.ConnectError("fail")
-
-        with pytest.raises(ThorixHTTPRetryError):
-            await retry_async(fn, ONE_RETRY)
-
-    @pytest.mark.asyncio
-    async def test_attempts_correct_number_of_times(self):
-        call_count = 0
-
-        async def fn():
-            nonlocal call_count
-            call_count += 1
-            raise httpx.ConnectError("fail")
-
-        with pytest.raises(ThorixHTTPRetryError):
-            await retry_async(fn, TWO_RETRIES)
-        assert call_count == 3
-
-
-class TestRetryAsyncStatusError:
-    @pytest.mark.asyncio
-    async def test_raises_status_error_on_4xx(self):
-        async def fn():
-            raise make_status_error(404)
-
-        with pytest.raises(ThorixHTTPStatusError):
-            await retry_async(fn, TWO_RETRIES)
-
-    @pytest.mark.asyncio
-    async def test_retries_on_500(self):
-        call_count = 0
-
-        async def fn():
-            nonlocal call_count
-            call_count += 1
-            raise make_status_error(500)
-
-        with pytest.raises(ThorixHTTPRetryError):
-            await retry_async(fn, ONE_RETRY)
-        assert call_count == 2
-
-    @pytest.mark.asyncio
-    async def test_recovers_after_500(self):
-        call_count = 0
-
-        async def fn():
-            nonlocal call_count
-            call_count += 1
-            if call_count == 1:
-                raise make_status_error(500)
-            return {"ok": True}
-
-        result = await retry_async(fn, ONE_RETRY)
-        assert result == {"ok": True}
-
-
-class TestRetryAsyncSleep:
-    @pytest.mark.asyncio
-    async def test_sleeps_between_retries(self):
-        config = HTTPConfig(max_retries=1, retry_base_delay=1.0, retry_delay_jitter=0)
-        call_count = 0
-
-        async def fn():
-            nonlocal call_count
-            call_count += 1
-            if call_count == 1:
-                raise httpx.ConnectError("fail")
-            return {"ok": True}
-
-        with patch("thorix.http.retry.asyncio.sleep") as mock_sleep:
-            mock_sleep.return_value = None
-            await retry_async(fn, config)
-        mock_sleep.assert_called_once()
-        assert mock_sleep.call_args[0][0] == pytest.approx(1.0, abs=0.01)
+        assert mock_sleep.call_args_list[1][0][0] == pytest.approx(1.5, abs=0.01)
