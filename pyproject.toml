@@ -2,15 +2,33 @@
 name = "thorix"
 version = "0.1.0"
 description = "Python SDK for VeChain"
-authors = [
-    {name = "None"}
-]
+authors = [{ name = "Clayton Neal" }]
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "httpx (>=0.28.1,<0.29.0)"
 ]
+keywords = [
+    "vechain",
+    "thor",
+    "blockchain",
+    "web3",
+    "sdk",
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/claytonneal/thorix"
+Repository = "https://github.com/claytonneal/thorix"
+Issues = "https://github.com/claytonneal/thorix/issues"
 
 [tool.poetry]
 packages = [{ include = "thorix", from = "src" }]

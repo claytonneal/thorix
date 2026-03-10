@@ -1,5 +1,9 @@
 # Thorix
 
+[![PyPI](https://img.shields.io/pypi/v/thorix)](https://pypi.org/project/thorix/)
+
+⚠️ Thorix is currently under development and not ready for production use.
+
 **Thorix** is a modern, Pythonic SDK for interacting with the **VeChain Thor** blockchain.
 
 It provides a clean, strongly-typed interface for reading chain data, building and signing transactions, interacting with smart contracts, and powering analytics, automation, and AI-driven workflows on VeChain.
@@ -29,7 +33,3 @@ Basic install:
 ```bash
 pip install thorix
 ```
-
-
-
-
