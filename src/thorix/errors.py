@@ -23,6 +23,10 @@ class ThorixHTTPInvalidResponseError(ThorixHttpError):
     """HTTP response was invalid"""
 
 
+class ThorixHTTPInvalidJSON(ThorixHttpError):
+    """Response from Thor failed json schema validation"""
+
+
 # ---------------------------------------
 # Config Errors
 # ---------------------------------------

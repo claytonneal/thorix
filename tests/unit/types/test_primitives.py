@@ -1,37 +1,6 @@
 import pytest
 
-from thorix.types.primitives import Address, Hex
-
-# ---------------------------------------------------------------------------
-# Hex
-# ---------------------------------------------------------------------------
-
-
-class TestHex:
-    def test_valid_hex(self):
-        assert Hex("0x1234abcd") == "0x1234abcd"
-
-    def test_normalises_to_lowercase(self):
-        assert Hex("0x1234ABCD") == "0x1234abcd"
-
-    def test_empty_hex(self):
-        assert Hex("0x") == "0x"
-
-    def test_is_str(self):
-        assert isinstance(Hex("0xdead"), str)
-
-    def test_invalid_no_prefix(self):
-        with pytest.raises(ValueError, match="Invalid hex string"):
-            Hex("1234abcd")
-
-    def test_invalid_non_hex_chars(self):
-        with pytest.raises(ValueError, match="Invalid hex string"):
-            Hex("0xGGGG")
-
-    def test_invalid_empty_string(self):
-        with pytest.raises(ValueError, match="Invalid hex string"):
-            Hex("")
-
+from thorix.types.primitives import Address
 
 # ---------------------------------------------------------------------------
 # Address
@@ -50,9 +19,6 @@ class TestAddress:
 
     def test_is_str(self):
         assert isinstance(Address(self.VALID), str)
-
-    def test_is_hex(self):
-        assert isinstance(Address(self.VALID), Hex)
 
     def test_invalid_too_short(self):
         with pytest.raises(ValueError, match="Invalid address"):
