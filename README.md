@@ -2,6 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/thorix)](https://pypi.org/project/thorix/)
 ![Main CI](https://github.com/claytonneal/thorix/actions/workflows/on-main.yml/badge.svg)
+[![codecov](https://codecov.io/gh/claytonneal/thorix/graph/badge.svg?token=LUD83Q8TB2)](https://codecov.io/gh/claytonneal/thorix)
 
 ⚠️ Thorix is currently under development and not ready for production use.
 
