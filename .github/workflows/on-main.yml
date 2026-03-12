@@ -29,15 +29,18 @@ jobs:
       - name: Install dependencies
         run: poetry install --with dev
 
-      - name: Run unit tests
-        run: make test-unit
-
       - name: Start solo node
         run: make solo-up
 
-      - name: Solo tests
-        run: make test-solo
+      - name: All tests
+        run: make test
 
       - name: Stop solo node
         if: always()
         run: make solo-down
+
+      - name: Upload code coverage
+        if: success() && matrix.python-version == '3.13'
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

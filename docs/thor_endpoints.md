@@ -4,7 +4,7 @@ A checklist of which thor endpoints have been implemented so far:
 
 ## Accounts
 
-- [] Get account details
+- [x] Get account details
 - [] Inspect clauses
 - [] Get accounts bytecode
 - [] Get value of storage position
