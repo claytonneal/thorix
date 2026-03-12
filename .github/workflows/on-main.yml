@@ -2,26 +2,42 @@ name: Main CI
 
 on:
   push:
-    branches:
-      - "main"
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
 
       - name: Install Poetry
-        run: pip install poetry
+        run: pip install poetry==1.8.3
 
       - name: Install dependencies
         run: poetry install --with dev
 
-      - name: Run tests
-        run: poetry run pytest
+      - name: Run unit tests
+        run: make test-unit
+
+      - name: Start solo node
+        run: make solo-up
+
+      - name: Solo tests
+        run: make test-solo
+
+      - name: Stop solo node
+        if: always()
+        run: make solo-down

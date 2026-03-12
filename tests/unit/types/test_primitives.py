@@ -138,15 +138,15 @@ class TestBlockLabel:
         assert isinstance(BlockLabel("best"), str)
 
     def test_invalid_label(self):
-        with pytest.raises(ValueError, match="Invalid block label"):
+        with pytest.raises(ValueError, match="not a valid BlockLabel"):
             BlockLabel("latest")
 
     def test_invalid_empty_string(self):
-        with pytest.raises(ValueError, match="Invalid block label"):
+        with pytest.raises(ValueError, match="not a valid BlockLabel"):
             BlockLabel("")
 
     def test_invalid_uppercase(self):
-        with pytest.raises(ValueError, match="Invalid block label"):
+        with pytest.raises(ValueError, match="not a valid BlockLabel"):
             BlockLabel("Best")
 
 

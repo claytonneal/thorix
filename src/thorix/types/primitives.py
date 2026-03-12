@@ -1,9 +1,9 @@
 import re
+from enum import StrEnum
 
 _ADDRESS_RE = re.compile(r"^0x[0-9a-fA-F]{40}$")
 _BLOCK_REF_RE = re.compile(r"^0x[0-9a-fA-F]{16}$")
 _BLOCK_ID_RE = re.compile(r"^0x[0-9a-fA-F]{64}$")
-_BLOCK_LABELS = {"best", "justified", "finalized"}
 
 
 class Address(str):
@@ -42,17 +42,14 @@ class BlockId(str):
         return str.__new__(cls, value.lower())
 
 
-class BlockLabel(str):
+class BlockLabel(StrEnum):
     """
     A VeChain block label: one of 'best', 'justified', or 'finalized'.
     """
 
-    def __new__(cls, value: str) -> "BlockLabel":
-        if value not in _BLOCK_LABELS:
-            raise ValueError(
-                f"Invalid block label: {value!r}. Must be one of {sorted(_BLOCK_LABELS)}"
-            )
-        return str.__new__(cls, value)
+    BEST = "best"
+    JUSTIFIED = "justified"
+    FINALIZED = "finalized"
 
 
 # Revision type is either a BlockId or a BlockLabel
