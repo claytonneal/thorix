@@ -1,7 +1,17 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from thorix.schemas.primitives import HexInt, HexStr
+from thorix.schemas.primitives import (
+    Address,
+    BlockId,
+    BlockRef,
+    HexInt,
+    HexStr,
+    HexStr16,
+    HexStr40,
+    HexStr64,
+    TransactionId,
+)
 
 # ---------------------------------------------------------------------------
 # Wrapper models
@@ -122,3 +132,131 @@ class TestHexInt:
     def test_invalid_dict(self):
         with pytest.raises(ValidationError):
             HexIntModel.model_validate({"value": {"v": 1}})
+
+
+# ---------------------------------------------------------------------------
+# bound_hex_str (via HexStr16 / HexStr40 / HexStr64)
+# ---------------------------------------------------------------------------
+
+
+class HexStr16Model(BaseModel):
+    value: HexStr16
+
+
+class HexStr40Model(BaseModel):
+    value: HexStr40
+
+
+class HexStr64Model(BaseModel):
+    value: HexStr64
+
+
+class TestHexStr16:
+    VALID = "0x" + "ab" * 8  # 16 hex chars
+
+    def test_valid(self):
+        m = HexStr16Model.model_validate({"value": self.VALID})
+        assert m.value == self.VALID
+
+    def test_normalises_to_lowercase(self):
+        m = HexStr16Model.model_validate({"value": "0x" + "AB" * 8})
+        assert m.value == self.VALID
+
+    def test_invalid_too_short(self):
+        with pytest.raises(ValidationError, match="expected 16 hex chars after 0x"):
+            HexStr16Model.model_validate({"value": "0x" + "ab" * 7})
+
+    def test_invalid_too_long(self):
+        with pytest.raises(ValidationError, match="expected 16 hex chars after 0x"):
+            HexStr16Model.model_validate({"value": self.VALID + "ab"})
+
+    def test_invalid_non_hex(self):
+        with pytest.raises(ValidationError):
+            HexStr16Model.model_validate({"value": "0x" + "GG" * 8})
+
+
+class TestHexStr40:
+    VALID = "0x" + "ab" * 20  # 40 hex chars
+
+    def test_valid(self):
+        m = HexStr40Model.model_validate({"value": self.VALID})
+        assert m.value == self.VALID
+
+    def test_invalid_too_short(self):
+        with pytest.raises(ValidationError, match="expected 40 hex chars after 0x"):
+            HexStr40Model.model_validate({"value": "0x" + "ab" * 19})
+
+    def test_invalid_too_long(self):
+        with pytest.raises(ValidationError, match="expected 40 hex chars after 0x"):
+            HexStr40Model.model_validate({"value": self.VALID + "ab"})
+
+
+class TestHexStr64:
+    VALID = "0x" + "ab" * 32  # 64 hex chars
+
+    def test_valid(self):
+        m = HexStr64Model.model_validate({"value": self.VALID})
+        assert m.value == self.VALID
+
+    def test_invalid_too_short(self):
+        with pytest.raises(ValidationError, match="expected 64 hex chars after 0x"):
+            HexStr64Model.model_validate({"value": "0x" + "ab" * 31})
+
+    def test_invalid_too_long(self):
+        with pytest.raises(ValidationError, match="expected 64 hex chars after 0x"):
+            HexStr64Model.model_validate({"value": self.VALID + "ab"})
+
+
+# ---------------------------------------------------------------------------
+# Domain aliases
+# ---------------------------------------------------------------------------
+
+
+class AddressModel(BaseModel):
+    value: Address
+
+
+class BlockRefModel(BaseModel):
+    value: BlockRef
+
+
+class BlockIdModel(BaseModel):
+    value: BlockId
+
+
+class TransactionIdModel(BaseModel):
+    value: TransactionId
+
+
+class TestDomainAliases:
+    def test_address_valid(self):
+        v = "0x" + "ab" * 20
+        assert AddressModel.model_validate({"value": v}).value == v
+
+    def test_address_invalid_length(self):
+        with pytest.raises(ValidationError):
+            AddressModel.model_validate({"value": "0x1234"})
+
+    def test_block_ref_valid(self):
+        v = "0x" + "ab" * 8
+        assert BlockRefModel.model_validate({"value": v}).value == v
+
+    def test_block_ref_invalid_length(self):
+        with pytest.raises(ValidationError):
+            BlockRefModel.model_validate({"value": "0x1234"})
+
+    def test_block_id_valid(self):
+        v = "0x" + "ab" * 32
+        assert BlockIdModel.model_validate({"value": v}).value == v
+
+    def test_block_id_invalid_length(self):
+        with pytest.raises(ValidationError):
+            BlockIdModel.model_validate({"value": "0x1234"})
+
+    def test_transaction_id_valid(self):
+        v = "0x" + "cd" * 32
+        assert TransactionIdModel.model_validate({"value": v}).value == v
+
+    def test_transaction_id_invalid_length(self):
+        with pytest.raises(ValidationError):
+            TransactionIdModel.model_validate({"value": "0x1234"})
