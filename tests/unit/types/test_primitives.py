@@ -1,6 +1,6 @@
 import pytest
 
-from thorix.types.primitives import Address, BlockId, BlockLabel, BlockRef, Revision
+from thorix.types.primitives import Address, BlockId, BlockLabel, BlockRef
 
 # ---------------------------------------------------------------------------
 # Address

@@ -22,7 +22,7 @@ class AccountsAPI:
     def __init__(self, transport: SyncTransport) -> None:
         self._transport = transport
 
-    def get(
+    def get_account(
         self, address: Address, *, revision: Revision = BlockLabel("best")
     ) -> Account:
         """
@@ -52,7 +52,7 @@ class AsyncAccountsAPI:
     def __init__(self, transport: AsyncTransport) -> None:
         self._transport = transport
 
-    async def get(
+    async def get_account(
         self, address: Address, *, revision: Revision = BlockLabel("best")
     ) -> Account:
         """
